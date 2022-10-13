@@ -1,327 +1,9 @@
 <!doctype html>
-<html lang="CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>WLQ</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="WLQ"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="WLQ"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta property="og:type" content="blog"><meta property="og:title" content="WLQ"><meta property="og:url" content="http://example.com/"><meta property="og:site_name" content="WLQ"><meta property="og:locale" content="CN"><meta property="og:image" content="http://example.com/img/og_image.png"><meta property="article:author" content="WLQ"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="http://example.com/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com"},"headline":"WLQ","image":["http://example.com/img/og_image.png"],"author":{"@type":"Person","name":"WLQ"},"publisher":{"@type":"Organization","name":"WLQ","logo":{"@type":"ImageObject","url":"http://example.com/img/logo.svg"}},"description":""}</script><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
-  (function () {
-      function switchTab() {
-          if (!location.hash) {
-            return;
-          }
-
-          const $tabMenu = document.querySelector(`a[href="${location.hash}"]`);
-          if (!$tabMenu) {
-            return;
-          }
-
-          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
-          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
-          Array.from($tabMenuContainer.querySelectorAll('a'))
-              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
-              .forEach($content => $content.classList.add('is-hidden'));
-
-          if ($tabMenu) {
-              $tabMenu.parentElement.classList.add('is-active');
-          }
-          const $activeTab = document.querySelector(location.hash);
-          if ($activeTab) {
-              $activeTab.classList.remove('is-hidden');
-          }
-      }
-      switchTab();
-      window.addEventListener('hashchange', switchTab, false);
-  })();
-  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="WLQ" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item is-active" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ORVR-wlq"><i class="fab fa-github"></i></a><a class="navbar-item search" title="Search" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item">Posted&nbsp;<time dateTime="2022-10-13T06:06:09.214Z" title="2022/10/13 下午2:06:09">2022-10-13</time></span><span class="level-item">Updated&nbsp;<time dateTime="2022-10-13T06:48:52.446Z" title="2022/10/13 下午2:48:52">2022-10-13</time></span><span class="level-item">an hour read (About 9044 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2022/10/13/golang/go%20GC%E6%A8%A1%E5%9E%8B/">GC 模型</a></h1><div class="content"><h1 id="go-GC模型"><a href="#go-GC模型" class="headerlink" title="go GC模型"></a>go GC模型</h1><p><a target="_blank" rel="noopener" href="https://www.processon.com/view/60fbe47a637689719d24c16b?fromnew=1">https://www.processon.com/view/60fbe47a637689719d24c16b?fromnew=1</a></p>
-<h3 id="什么是GC"><a href="#什么是GC" class="headerlink" title="什么是GC"></a>什么是GC</h3><p>现代高级编程语言管理内存的方式分为两种：自动和手动，像C、C++ 等编程语言使用手动管理内存的方式，工程师编写代码过程中需要主动申请或者释放内存；而 PHP、Java 和 Go 等语言使用自动的内存管理系统，有内存分配器和垃圾收集器来代为分配和回收内存，其中垃圾收集器就是我们常说的GC。</p>
-<h3 id="GC-回收的是什么？"><a href="#GC-回收的是什么？" class="headerlink" title="GC 回收的是什么？"></a><strong><strong>GC 回收的是什么？</strong></strong></h3><p>在应用程序中会使用到两种内存，分别为堆和栈。GC负责回收堆内存，而不负责回收栈中的内存。那么这是为什么呢？</p>
-<p>主要原因是栈是一块专用内存，专门为了函数执行而准备的，存储着函数中的局部变量以及调用栈。除此以外，栈中的数据都有一个特点——简单。比如局部变量不能被函数外访问，所以这块内存用完就可以直接释放。正是因为这个特点，栈中的数据可以通过简单的编译器指令自动清理，并不需要通过 GC 来回收。</p>
-<h3 id="GC算法的种类"><a href="#GC算法的种类" class="headerlink" title="GC算法的种类"></a><strong><strong>GC算法的种类</strong></strong></h3><p>主流的垃圾回收算法有两大类，分别是追踪式垃圾回收算法和引用计数算法。而Go语言现在用的三色标记法就属于追踪式垃圾回收算法的一种。</p>
-<h3 id="GC-相关概念"><a href="#GC-相关概念" class="headerlink" title="GC 相关概念"></a><strong><strong>GC 相关概念</strong></strong></h3><p>STW - 暂停应用程序</p>
-<p>mutator - 垃圾收集场景下的应用程序</p>
-<h2 id="什么是垃圾"><a href="#什么是垃圾" class="headerlink" title="什么是垃圾"></a>什么是垃圾</h2><p>垃圾检测通常通过建立一些根对象集合以及建立一个从这些根对象开始能够触及的对象集合来实现。如果正在执行的程序可以访问到根对象和某个对象之间存在引用路径，这个对象就是可触及的。对于程序来说，根对象总是可以访问的。从这些根对象开始，任何可以被触及的对象都被认为是“活动”的对象，无法被触及的对象被认为是垃圾。</p>
-<h2 id="如何识别垃圾"><a href="#如何识别垃圾" class="headerlink" title="如何识别垃圾"></a>如何识别垃圾</h2><p>常见的垃圾回收策略分为两种：一种是直接回收，即引用计数；另一种是间接回收，即追踪式回收（可达性分析）。</p>
-<ul>
-<li>个人简单理解为：一个把这种消耗平摊在应用的日常运行中，一个攒着处理。</li>
-<li>两种方法其实都只关心引用类型，像int、string 等基本类型不需要关心，因为它们在栈内存，而GC回收的是堆内存。</li>
-</ul>
-<h2 id="引用计数算法"><a href="#引用计数算法" class="headerlink" title="引用计数算法"></a>引用计数算法</h2><p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/905c7427-e532-4f87-a949-53d1c1bd5028/Untitled.png" alt="Untitled"></p>
-<h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>为堆中的每个对象引入一个计数器，记录下这个对象被引用次数，通过这个计数来区分活动对象和垃圾对象</p>
-<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>给对象添加一个引用计数器，每当一个地方引用它时，数据器加1，当引用失效时，计数器减1，计数器为0的即可被回收</p>
-<ul>
-<li>由此可以知晓引用计数需要占据额外的存储空间，如果本身的内存单元较小则，计数器占用的空间就会变得明显</li>
-<li>引用计数的内存释放等于把这个开销平摊到应用的日常运行中，因为在计数为0的那一刻，就是释放的内存的时刻，这其实对于内存敏感的场景很适用</li>
-</ul>
-<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>实现简单，判断效率高并且内存清理及时</p>
-<p>注：其实极端情况下引用计数也不会那么及时，假如现在有一个对象引用了另一个对象，而另一个对象又引用了另一个，依次引用下去，那么当第一个对象要被回收的时候，就会引发连锁回收反应，对象很多的话这个延时就凸显出来了</p>
-<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><p>很难解决对象之间的相互循环引用（objA.instance &#x3D; objB; objB.instance &#x3D; objA）的问题。</p>
-<h3 id="Python是如何解决循环引用的问题呢"><a href="#Python是如何解决循环引用的问题呢" class="headerlink" title="Python是如何解决循环引用的问题呢"></a>Python是如何解决循环引用的问题呢</h3><ul>
-<li>Python使用双向链表来链接容器对象，当一个容器对象被创建时，他被插入到这个链表中，当它被删除时则移除，每个容器对象上还有一个gc_refs字段</li>
-<li>示例中A和B对象循环引用，C对象引用了D对象，最终循环引用的A和B都能被清理</li>
-</ul>
-<p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/980f43ea-934d-4b82-bbd3-105918134499/Untitled.png" alt="Untitled"></p>
-<ul>
-<li>对每个容器对象，将 gc_refs 设置为该对象的引用计数。</li>
-<li>对每个容器对象，查找它所引用的容器对象，并减少找到的被引用的容器对象的 gc_refs 字段。</li>
-</ul>
-<p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7040bd5b-4408-41b7-92a9-609469a01340/Untitled.png" alt="Untitled"></p>
-<ul>
-<li>将此时 gc<em>refs 大于 0 的容器对象移动到不同的集合中，因为 gc</em>refs 大于 0 说明有对象外部引用它，因此不能释放这些对象。</li>
-<li>然后找出 gc_refs 大于 0 的容器对象所引用的对象，它们也不能被清除。</li>
-<li>最后剩下的对象说明仅由该链表中的对象引用，没有外部引用，所以是垃圾可以清除。</li>
-</ul>
-<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>Python 没有解决引用计数的循环引用问题，只是结合了非传统的标记-清除方案来兜底，算是曲线救国。说其非传统是因为标记是采取的是<strong>找不可达的对象，而不是可达的对象。</strong></p>
-<h2 id="追踪式回收算法（可达性分析）"><a href="#追踪式回收算法（可达性分析）" class="headerlink" title="追踪式回收算法（可达性分析）"></a>追踪式回收算法（可达性分析）</h2><p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/1f2f5ab2-1816-4680-9b8a-9ffcf8059589/Untitled.png" alt="Untitled"></p>
-<p>可达性分析是现代垃圾回收的核心选择，但是由于需要统一回收比较耗时，容易影响应用的正常运行。</p>
-<h3 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h3><p>追踪从根节点开始的引用图。以某种方式为追踪中遇上的对象打上标记，当追踪结束时，没有被打上标记的对象就被判定是不可触及的，可以被当作垃圾收集。</p>
-<p>其实就是一个标记的过程，标记可达对象，清除不可达对象。</p>
-<p>注：垃圾收集的根对象一般包括<strong>全局变量和栈对象</strong>等。</p>
-<h3 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h3><p>Java 和 C# 都是使用可达性分析来判断对象是否存活。通过一系列的名为“GC Root”的对象作为起始点，从这些节点开始向下搜索，搜索所有走过的路径称为引用链（Reference Chain）,当一个对象到“GC Root”没有任何引用链相连时（用图论来说就是“GC Root”到这个对象不可达时），证明该对象是可以被回收的。</p>
-<h3 id="JVM如何判断栈上的数据是什么类型"><a href="#JVM如何判断栈上的数据是什么类型" class="headerlink" title="JVM如何判断栈上的数据是什么类型"></a>JVM如何判断栈上的数据是什么类型</h3><p>GC只需要关注引用类型，因此它需要知道栈上、寄存器等哪个位置是引用</p>
-<h3 id="保守式GC"><a href="#保守式GC" class="headerlink" title="保守式GC"></a>保守式GC</h3><ul>
-<li>保守式 GC 指的是 JVM 不会记录数据的类型，也就是无法区分内存上的某个位置的数据到底是引用类型还是非引用类型。</li>
-<li>因为只能靠一些条件来猜测是否有指针指向，如果不能确定这是指针，只能保守认为就是指针。因此<code>保守式 GC 会有放过一些“垃圾”，对内存不太友好。</code></li>
-<li>因为疑似指针的情况，导致我们无法确认它是否是真的指针，所以也就无法移动对象，因为移动对象就需要改指针，因此保守式 GC 只能使用标记-清除这种不移动对象的算法。注：有一个方法就是加个中间层，也就是句柄层，引用会先指到句柄，然后再从句柄表找到实际对象，因此直接引用不需要改变，如果要移动对象只需要修改句柄表即可。不过这样访问就多了一层，效率就变低了。</li>
-</ul>
-<h3 id="半保守式GC"><a href="#半保守式GC" class="headerlink" title="半保守式GC"></a>半保守式GC</h3><ul>
-<li>半保守式GC，在对象上会记录类型信息而其他地方还是没有记录，因此从根扫描的话还是一样，得靠猜测。</li>
-<li>半保守式 GC 只有根直接扫描的对象无法移动，从直接对象再追溯出去的对象可以移动，所以半保守式 GC 可以使用移动部分对象的算法，也可以使用标记-清除这种不移动对象的算法。</li>
-</ul>
-<h3 id="准确式GC"><a href="#准确式GC" class="headerlink" title="准确式GC"></a>准确式GC</h3><ul>
-<li>需要清晰的知晓对象的类型，包括在栈上的引用也能得知类型等。</li>
-<li>思路：可以在指针上打标记，来表明类型，或者在外部记录类型信息形成一张映射表。HotSpot 用的就是映射表，这个表叫 OopMap。它记录了执行到栈上和寄存器里哪些位置是引用。注：针对方法，会在安全点生成 OopMap，</li>
-</ul>
-<p>扩展阅读：什么是安全点、安全区?</p>
-<p><a target="_blank" rel="noopener" href="https://pianshen.com/article/87582077389/">https://pianshen.com/article/87582077389/</a></p>
-<h2 id="如何清理垃圾"><a href="#如何清理垃圾" class="headerlink" title="如何清理垃圾"></a>如何清理垃圾</h2><h2 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h2><p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/033e34c3-2a37-4b27-9e5e-2a360adde145/Untitled.png" alt="Untitled"></p>
-<h3 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h3><p>它将垃圾收集分为两个阶段</p>
-<ul>
-<li>标记阶段：标记出可达的活跃对象。</li>
-<li>清除阶段：回收不可达的垃圾对象所占用的空间。</li>
-</ul>
-<h3 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h3><ul>
-<li>优点<ul>
-<li>实现简单</li>
-</ul>
-</li>
-<li>缺点<ul>
-<li>标记和清除的效率不高；</li>
-<li>容易产生大量不连续的内存碎片，碎片太多可能会导致后续没有足够的连续内存分配给较大的对象，从而提前触发新的一次垃圾收集动作。</li>
-</ul>
-</li>
-</ul>
-<h3 id="优化策略"><a href="#优化策略" class="headerlink" title="优化策略"></a>优化策略</h3><p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2ebaa50a-b048-4d1e-899d-0e8f2e44d683/Untitled.png" alt="Untitled"></p>
-<ul>
-<li>位图标记法<ul>
-<li>将堆中的内存可以分成一块一块，而对象就是在一块，或者多块内存上。</li>
-<li>堆内存某个块用一个位来标记，根据对象所在的地址和堆的起始地址就可以算出对象是在第几块上，然后将一个位图中的第几位置为 1 ，表明这块地址上的对象被标记了。</li>
-<li>位图标记法不仅可以利用写时复制，清除也更加高效，如果标记在对象头上，那么需要遍历整个堆来扫描对象，现在有了位图，可以快速遍历清除对象。</li>
-</ul>
-</li>
-<li>多个空闲链表<ul>
-<li>遍历链表查找合适的内存块，会比较耗时。根据内存分块大小组成不同的链表，比如分为大分块链表和小分块链表，这样根据申请的内存分块大小遍历不同的链表，加快申请的效率。</li>
-</ul>
-</li>
-</ul>
-<h2 id="标记-复制算法"><a href="#标记-复制算法" class="headerlink" title="标记-复制算法"></a>标记-复制算法</h2><p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/39833fd7-8a2c-4f50-9db9-7fbfb2bf55df/Untitled.png" alt="Untitled"></p>
-<p>复制算法的效率与存活对象的数目多少有很大的关系，如果存活对象很少，复制算法的效率就会很高。</p>
-<h3 id="定义-3"><a href="#定义-3" class="headerlink" title="定义"></a>定义</h3><p>他把内存空间划分为两个相等的区域，每次只使用其中一个一个区域，在垃圾收集时，遍历当前使用的区域，把存活对象复制到另一个区域中，最后将当前使用的区域的可回收的对象进行回收</p>
-<h3 id="实现-2"><a href="#实现-2" class="headerlink" title="实现"></a>实现</h3><ul>
-<li>首先这个算法会把堆分为两块，一块是from、一块是To</li>
-<li>对象只会在from上生成，发生GC之后会找到所有存活对象，然后将其复制到to区，之后整体回收from区。</li>
-<li>再将to区和from区身份对调，即to变成from，from变成to</li>
-</ul>
-<h3 id="优缺点-1"><a href="#优缺点-1" class="headerlink" title="优缺点"></a>优缺点</h3><ul>
-<li>直接移动指针分配内存，效率很高，对于CPU缓存亲和性高（因为从根开始遍历一个节点，是深度优先遍历，把关联的对象都找到，然后内存分配在相近的地方）</li>
-<li>每次都对整个半区进行内存回收，不需要考虑内存碎片的问题</li>
-</ul>
-<h3 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h3><p>代价就是使用内存为原来的一半</p>
-<h2 id="标记-压缩算法（标记-整理算法）"><a href="#标记-压缩算法（标记-整理算法）" class="headerlink" title="标记-压缩算法（标记-整理算法）"></a>标记-压缩算法（标记-整理算法）</h2><p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6b3382ea-d598-49fc-9f90-2f227d59386c/Untitled.png" alt="Untitled"></p>
-<h3 id="定义-4"><a href="#定义-4" class="headerlink" title="定义"></a>定义</h3><p>在标记可回收的对象后将所有存活的对象压缩到内存的一端，使它们紧凑地排列在一起，然后对边界以外的内存进行回收，回收后，已用和未用的内存都各自一边。</p>
-<h3 id="优缺点-2"><a href="#优缺点-2" class="headerlink" title="优缺点"></a>优缺点</h3><h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><p>将存活的对象往边界整理，也没有内存碎片，不会想标记复制算法浪费一半内存，内存利用率较高。</p>
-<h3 id="缺点-2"><a href="#缺点-2" class="headerlink" title="缺点"></a>缺点</h3><p>需要对堆进行多次搜索，花费时间较长（毕竟是在一个空间内又标记，又移动的，所以整体而言花费的时间较多，而且如果堆很大的情况，那么消耗的时间将更加突出）。</p>
-<h2 id="进一步优化方向有哪些"><a href="#进一步优化方向有哪些" class="headerlink" title="进一步优化方向有哪些"></a>进一步优化方向有哪些</h2><p>可达性分析的研究方向就是往如何减少对应用程序运行的影响即减少 STW(stop the world) 的时间。</p>
-<ul>
-<li>根据对象分代假说研究出了分代收集，根据对象的特性划分了新生代和老年代，采取不同的收集算法，提升回收的效率。</li>
-<li>想方设法的拆解 GC 的步骤使得可以与应用线程并发，并且采取并行收集，加快收集速度。</li>
-</ul>
-<h2 id="分代收集"><a href="#分代收集" class="headerlink" title="分代收集"></a>分代收集</h2><p>应该对不同的生命周期的对象采取不同的收集策略，根据生命周期长短将它们放到不同的区域，并在不同的区域采用不同的收集算法，这就是分代的概念，分代收集算法会结合不同的收集算法来处理不同的空间</p>
-<h3 id="JVM-GC"><a href="#JVM-GC" class="headerlink" title="JVM GC"></a>JVM GC</h3><p>现在主流的jvm垃圾收集器都采用分代收集算法</p>
-<h3 id="堆区划分"><a href="#堆区划分" class="headerlink" title="堆区划分"></a>堆区划分</h3><p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/75d12c4d-dd6f-4c93-80b7-4739f15413ff/Untitled.png" alt="Untitled"></p>
-<p>Java堆区基于分代的概念，分为新生代和老年代。</p>
-<p>新生代再细分为Eden空间、From Survivor空间和To Survivor空间。因为Eden空间中的大多数生命周期很短，所以新生代的空间划分并不是均分的，HotSpot虚拟机默认Eden:From Survivor:To Survivor空间的所占的比例为8:1:1。</p>
-<h3 id="新生代垃圾收集（minor-colletion）"><a href="#新生代垃圾收集（minor-colletion）" class="headerlink" title="新生代垃圾收集（minor colletion）"></a>新生代垃圾收集（minor colletion）</h3><blockquote>
-<p>由于新生代中绝大多数对象的生命周期很短，应用标记复制算法的效率就会很高。</p>
-</blockquote>
-<ul>
-<li>当执行一次 Minor Collection 时，Eden 空间和 From Survivor 空间存活的对象会被复制到 To Survivor 空间。</li>
-<li>有两种特殊情况，存活的对象不会复制到 To Survivor 空间，而是晋升到老年代。1.存活的对象的分代年龄超过-XX:MaxTenuringThreshold（用于控制对象经历多少次 Minor GC 才晋升到老年代）所指定的阈值。2.To Survivor 空间容量达到阈值。</li>
-<li>当所有存活的对象被复制到 To Survivor 空间或晋升到老年代，Eden 空间和 From Survivor 空间都会被清空，新生代存活的对象都存放在 To Survivor 空间。接下来将 From Survivor 空间和 To Survivor 空间互换位置，每次 Survivor 空间互换都要保证 To Survivor 空间是空的，这就是复制算法在新生代中的应用。</li>
-</ul>
-<h3 id="老年代垃圾收集（Full-Collection-x2F-Major-Collection）"><a href="#老年代垃圾收集（Full-Collection-x2F-Major-Collection）" class="headerlink" title="老年代垃圾收集（Full Collection&#x2F;Major Collection）"></a>老年代垃圾收集（Full Collection&#x2F;Major Collection）</h3><ul>
-<li>Full Collection 通常情况下会伴随至少一次的 Minor Collection。</li>
-<li>老年代收集频率较低，耗时较长。利用标记清除和标记压缩两者结合起来收集老年代，比如平日都用标记-清除，当察觉内存碎片实在太多了就用标记-整理来配合使用。</li>
-</ul>
-<h3 id="跨代引用问题"><a href="#跨代引用问题" class="headerlink" title="跨代引用问题"></a>跨代引用问题</h3><h1 id="跨代引用"><a href="#跨代引用" class="headerlink" title="跨代引用"></a><strong>跨代引用</strong></h1><p>在回收新生代的时候，有可能有老年代的对象引用了新生代对象，所以老年代也需要作为根，但是如果扫描整个老年代的话效率就又降低了。因此，需要用记录集（Remembered Set）记录跨代之间的引用而避免扫描整体非收集区域。</p>
-<h1 id="记忆集"><a href="#记忆集" class="headerlink" title="记忆集"></a><strong>记忆集</strong></h1><p>记忆集是一种用于记录从非收集区域指向收集区域的指针集合的抽象数据结构。根据记录的精度分为</p>
-<ul>
-<li>字长精度，每条记录精确到机器字长。</li>
-<li>对象精度，每条记录精确到对象。</li>
-<li>卡精度，每条记录精确到一块内存区域。最常见的是用卡精度来实现记忆集，称之为卡表。卡表的话占用内存比较少，但是相对字长、对象来说精度不准，需要扫描一片。所以也是一种取舍，到底要多大的卡。</li>
-</ul>
-<p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e79c799b-710d-493e-a264-4c0e5f188f2e/Untitled.png" alt="Untitled"></p>
-<h3 id="卡表"><a href="#卡表" class="headerlink" title="卡表"></a>卡表</h3><h1 id="定义-5"><a href="#定义-5" class="headerlink" title="定义"></a><strong>定义</strong></h1><ul>
-<li>卡的意思就是将内存空间分成很多卡片。假设新生代对象 A 被老年代 D 引用了，那么就需要记录老年代 D 所在的那一块内存片有引用新生代对象。因为卡的范围大，如果此时 D 旁边在同一个卡内的对象也有引用新生代对象的话，那么就只需要一条记录。</li>
-</ul>
-<h1 id="实现-3"><a href="#实现-3" class="headerlink" title="实现"></a><strong>实现</strong></h1><ul>
-<li>一般会用字节数组来实现卡表，卡的范围也是设为 2 的 N 次幂大小。</li>
-<li>卡表一般都是通过写屏障来维护的，会在对象引用字段赋值的时更新卡表。即：当引用字段赋值的时候判断下当前对象是老年代对象，所引用对象是新生代对象，于是就在老年代对象所对应的卡表位置置为 1，表示脏，待会需要加入根扫描。</li>
-<li>回收新生代的时候，只需要扫描卡表，把标识为 1 的脏表所在内存块加入到 GC Roots 中扫描，这样就不需要扫描整个老年代了。</li>
-<li>在堆内存比较大，且跨代引用较少的时候，还可以使用多卡表，提高扫描效率。</li>
-</ul>
-<h1 id="浮动垃圾现象"><a href="#浮动垃圾现象" class="headerlink" title="浮动垃圾现象"></a><strong>浮动垃圾现象</strong></h1><p>不过这种将老年代作为根来扫描会有浮动垃圾的情况，因为老年代的对象可能已经成为垃圾，所以拿垃圾来作为根扫描出来的新生代对象也很有可能是垃圾。</p>
-<h2 id="增量式GC"><a href="#增量式GC" class="headerlink" title="增量式GC"></a>增量式GC</h2><p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/3deca538-eacc-45b6-817e-9f59f0eb4301/Untitled.png" alt="Untitled"></p>
-<h3 id="思想"><a href="#思想" class="headerlink" title="思想"></a><strong>思想</strong></h3><p>将原本时间较长的暂停时间切分成多个更小的 GC 时间片。</p>
-<h3 id="实现-4"><a href="#实现-4" class="headerlink" title="实现"></a><strong>实现</strong></h3><p>增量式的垃圾收集需要使用<strong>三色标记算法</strong></p>
-<h3 id="优缺点-3"><a href="#优缺点-3" class="headerlink" title="优缺点"></a><strong>优缺点</strong></h3><p>增量地标记和清除垃圾，虽然 GC 的时间跨度变大，但降低应用程序STW的最长时间；且引入写屏障也需要承担额外的计算开销。</p>
-<h2 id="并发式GC"><a href="#并发式GC" class="headerlink" title="并发式GC"></a>并发式GC</h2><p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/623ffc6e-715b-46f7-8ae0-dbce1906ca1a/Untitled.png" alt="Untitled"></p>
-<h3 id="思想-1"><a href="#思想-1" class="headerlink" title="思想"></a><strong>思想</strong></h3><p>将可以将能够并发执行的工作尽量并发执行，当然部分阶段还是需要暂停用户程序的。</p>
-<h3 id="实现-5"><a href="#实现-5" class="headerlink" title="实现"></a><strong>实现</strong></h3><p>通过开启读写屏障，利用多核优势，让 GC 与用户程序并行执行.</p>
-<h3 id="优缺点-4"><a href="#优缺点-4" class="headerlink" title="优缺点"></a><strong>优缺点</strong></h3><p>这样能够减少程序的最长暂停时间，还能减少 GC 的时间，但且引入读写屏障也需要承担额外的计算开销。</p>
-<h1 id="设计原理"><a href="#设计原理" class="headerlink" title="设计原理"></a>设计原理</h1><h2 id="三色标记算法"><a href="#三色标记算法" class="headerlink" title="三色标记算法"></a>三色标记算法</h2><p>为了以缩短 STW 的时间，追踪式垃圾收集器都会实现三色标记算法的变种。因此首先要了解三色标记算法的工作原理。</p>
-<p>注意：三色标记清除算法本身并不支持并发增量执行的，它仍然需要 STW，但是可以通过屏障等技术优化过程时期支持并发和增量执行。</p>
-<h3 id="标记过程"><a href="#标记过程" class="headerlink" title="标记过程"></a>标记过程</h3><p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/cd631e49-1c60-43b3-912d-1db5d7c6b540/Untitled.png" alt="Untitled"></p>
-<p>抽象出三色来表示 GC 中对象三种不同状况。白色：表示还未搜索的对象。灰色：表示正在搜索还未搜索完的对象。黑色：表示搜索完成的对象。</p>
-<p>它标记过程有几个步骤：</p>
-<ul>
-<li>初始时，所有对象都在白色集合中。0 从GC Roots出发扫描所有根对象，将它们引用的对象放入灰色集合中。</li>
-<li>从灰色集合中获取对象，将本对象引用到的对象放入灰色集合中，将本对象放入黑色集合。</li>
-<li>重复步骤3，直至灰色集合为空时，白色集合中的对象即为需要清理的对象。注：可以结合上图，来理解（图不太对，蓝色代表black ，黄色代表grey）</li>
-</ul>
-<h3 id="执行是为什么需要-STW"><a href="#执行是为什么需要-STW" class="headerlink" title="执行是为什么需要 STW"></a>执行是为什么需要 STW</h3><p>如果标记时不 STW，用户程序可能在标记执行的过程中修改对象的指针，可能会造成漏标、多标情况。</p>
-<p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/a93d5b62-95ad-40fa-b61a-16dc5b1ee745/Untitled.png" alt="Untitled"></p>
-<h3 id="漏标情况-不能接受"><a href="#漏标情况-不能接受" class="headerlink" title="漏标情况 - 不能接受"></a>漏标情况 - 不能接受</h3><p>1.第一个阶段搜索到 A 的子对象 B了，因此 A 被染成了黑色，B 为灰色。此时需要搜索 B。</p>
-<p>2.但是在 B 开始搜索时，应用程序建立了从 A 对象到 D 对象的引用，由于 A 已经黑色了，所以不会再搜索到 D 了，所以 D 对象会被垃圾收集器错误地回收。</p>
-<ol>
-<li>这种错误称为悬挂指针，即指针没有指向特定类型的合法对象；将还在使用的对象当成垃圾清除了，影响了内存的安全性，</li>
-</ol>
-<h3 id="多标情况-可以接受"><a href="#多标情况-可以接受" class="headerlink" title="多标情况 - 可以接受"></a>多标情况 - 可以接受</h3><p>多标：比如 A 变成黑色之后，根引用被 mutator 删除了，那其实 A 就属于垃圾，但是已经被标记为黑色了，那就得等下次 GC 清除了。多标其实还能接受。</p>
-<h3 id="如何解决漏标情况？满足三色不变性"><a href="#如何解决漏标情况？满足三色不变性" class="headerlink" title="如何解决漏标情况？满足三色不变性"></a>如何解决漏标情况？满足三色不变性</h3><p>想要在并发或者增量的标记算法中保证正确性，我们需要达成以下两种三色不变性（Tri-color invariant）中的任意一种：</p>
-<ul>
-<li>强三色不变性 — 黑色对象不会指向白色对象，只会指向灰色对象或者黑色对象；</li>
-<li>弱三色不变性 — 黑色对象指向的白色对象必须包含一条从灰色对象经由多个白色对象的可达路径</li>
-</ul>
-<h3 id="如何满足三色不变性？屏障技术"><a href="#如何满足三色不变性？屏障技术" class="headerlink" title="如何满足三色不变性？屏障技术"></a>如何满足三色不变性？屏障技术</h3><p><strong>定义</strong></p>
-<p>内存屏障技术是一种屏障指令，它可以让 CPU 或者编译器在执行内存相关操作时遵循特定的约束，该技术能够保证内存操作的顺序性，在内存屏障前执行的操作一定会先于内存屏障后执行的操作。</p>
-<p><strong>实现方式</strong></p>
-<ul>
-<li>垃圾收集中的屏障技术更像是一个钩子方法，它是在用户程序读取对象、创建新对象以及更新对象指针时执行的一段代码。</li>
-</ul>
-<p><strong>分类</strong></p>
-<p>根据操作类型的不同，我们可以将它们分成读屏障（Read barrier）和写屏障（Write barrier）两种。注：读屏障需要在读操作中加入代码片段，对用户程序的性能影响很大，所以编程语言往往都会采用写屏障保证三色不变性。</p>
-<h2 id="写屏障技术"><a href="#写屏障技术" class="headerlink" title="写屏障技术"></a>写屏障技术</h2><p>写屏障的实现需要编译器和运行时的共同协作。在 SSA 中间代码生成阶段，编译器会使用 cmd&#x2F;compile&#x2F;internal&#x2F;ssa.writebarrier 在 Store、Move 和 Zero 操作中加入写屏障。</p>
-<h3 id="插入写屏障-满足强三色不变性"><a href="#插入写屏障-满足强三色不变性" class="headerlink" title="插入写屏障-满足强三色不变性"></a>插入写屏障-满足强三色不变性</h3><blockquote>
-<p>插入写屏障：在黑色引用白色对象时候，将白色对象置为灰色，这叫增量更新，以此满足强三色不变性。</p>
-</blockquote>
-<p>插入写屏障的伪代码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">writePointer(slot, ptr):</span><br><span class="line">    shade(ptr)</span><br><span class="line">    *slot = ptr</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>每当执行类似 *slot &#x3D; ptr 的表达式时，我们会执行上述写屏障通过 shade 函数尝试改变指针的颜色。如果 ptr 指针是白色的，那么该函数会将该对象设置成灰色，其他情况则保持不变。</p>
-<p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/77294b51-4f30-40f3-b812-59e019f5b163/Untitled.png" alt="Untitled"></p>
-<p><strong>标记过程</strong></p>
-<p>1.垃圾收集器将根对象指向 A 对象标记成黑色并将 A 对象指向的对象 B 标记成灰色；</p>
-<p>2.用户程序修改 A 对象的指针，将原本指向 B 对象的指针指向 C 对象，这时触发写屏障将 C 对象标记成灰色；</p>
-<p>3.垃圾收集器依次遍历程序中的其他灰色对象，将它们分别标记成黑色；</p>
-<p><strong>存在问题</strong></p>
-<p>它会将<strong>有存活可能的对象都标记成灰色</strong>，因此会发现实际上不再存活的 B 对象最后没有被回收；而如果我们在第二和第三步之间将指向 C 对象的指针改回指向 B，垃圾收集器仍然认为 C 对象是存活的。这些被错误标记的垃圾对象只有在下一个循环才会被回收。</p>
-<h3 id="删除写屏障-满足弱三色不变性"><a href="#删除写屏障-满足弱三色不变性" class="headerlink" title="删除写屏障- 满足弱三色不变性"></a>删除写屏障- 满足弱三色不变性</h3><blockquote>
-<p>删除写屏障：在灰色对象删除对白色对象的引用时，将白色对象置为灰，其实就是快照保存旧的引用关系，这叫STAB（snapshot-at-the-beginning），以此满足弱三色不变性，</p>
-</blockquote>
-<p>删除写屏障的伪代码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">writePointer(slot, ptr)</span><br><span class="line">    shade(*slot)</span><br><span class="line">    *slot = ptr</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>每当执行类似 *slot &#x3D; ptr 的表达式时，我们会执行上述写屏障通过 shade 函数尝试改变指针的颜色。此外如果 ptr 指针是白色的，那么该函数会将该对象设置成灰色，其他情况则保持不变。</p>
-<p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d92bee09-3735-4f06-b521-8b9022386dd6/Untitled.png" alt="Untitled"></p>
-<p><strong>标记过程</strong></p>
-<p>1.垃圾收集器将根对象指向 A 对象标记成黑色并将 A 对象指向的对象 B 标记成灰色；</p>
-<p>2.用户程序将 A 对象原本指向 B 的指针指向 C，触发删除写屏障，但是因为 B 对象已经是灰色的，所以不做改变；</p>
-<p>3.用户程序将 B 对象原本指向 C 的指针删除，触发删除写屏障，白色的 C 对象被涂成灰色；</p>
-<p>4.垃圾收集器依次遍历程序中的其他灰色对象，将它们分别标记成黑色；注：删除写屏障通过对 C 对象的着色，保证了 C 对象和下游的 D 对象能够在这一次垃圾收集的循环中存活，避免发生悬挂指针以保证用户程序的正确性。</p>
-<h1 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h1><h2 id="执行周期"><a href="#执行周期" class="headerlink" title="执行周期"></a>执行周期</h2><p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b45a1d8e-8e7f-4de9-9933-236fd5ce9b18/Untitled.png" alt="Untitled"></p>
-<ul>
-<li>Go 垃圾收集器的执行周期，可以分成清除终止、标记、标记终止和清除四个不同阶段，它们分别完成了不同的工作；</li>
-<li>运行时虽然只会使用 <em>GCoff、</em>GCmark 和 _GCmarktermination 三个状态表示垃圾收集的全部阶段，但是在实现上却复杂很多，</li>
-</ul>
-<h3 id="1-清理终止阶段-STW"><a href="#1-清理终止阶段-STW" class="headerlink" title="1 清理终止阶段-STW"></a>1 清理终止阶段-STW</h3><p>1.暂停程序，所有的 P 在这时会进入安全点；注： GC 不是在任何位置都能进入的，只能在安全点进入。</p>
-<p>2.如果当前垃圾收集循环是强制触发的，还需要处理还未被清理的内存管理单元</p>
-<h3 id="什么是安全点（safe-point）"><a href="#什么是安全点（safe-point）" class="headerlink" title="什么是安全点（safe point）"></a>什么是安全点（safe point）</h3><ul>
-<li><strong>定义</strong></li>
-</ul>
-<p>mutator 所有线程中这些有机会成为暂停位置的点就叫 safepoint 即安全点。</p>
-<p>因为 GC 时需要暂停，因此安全点也是执行 GC 的点，其他位置是不能执行 GC 的。</p>
-<ul>
-<li><strong>主要在哪些位置放置安全点？</strong></li>
-</ul>
-<p>对于解释器来说其实每个字节码边界都可以成为一个安全点，对于 JIT 编译的代码也能在很多位置插入安全点，但是实现上只会在一些特定的位置插入安全点，例如：循环的末尾、方法临返回前、调用方法的call指令后可能抛异常的位置。</p>
-<h3 id="如何得知此时需要在安全点暂停呢"><a href="#如何得知此时需要在安全点暂停呢" class="headerlink" title="如何得知此时需要在安全点暂停呢"></a>如何得知此时需要在安全点暂停呢</h3><p>check 安全点按解释执行和编译执行有不同的方式：</p>
-<ul>
-<li><strong>解释执行 check</strong></li>
-</ul>
-<p>在安全点轮询一个标志位，需要暂停时GC 就会设置这个标志位。</p>
-<ul>
-<li><strong>编译执行 check</strong></li>
-</ul>
-<p>在需要进入安全点时就把这个内存页设为不可访问，然后编译代码访问就会发生异常，然后捕获这个异常挂起即暂停。</p>
-<ul>
-<li><strong>如果阻塞住的线程咋办？它到不了安全点啊，总不能等着它吧？</strong></li>
-</ul>
-<p>这里引入<strong>安全区域</strong>的概念，在引用关系不会发生变化的代码段中的区域称为安全区域。<strong>在安全区域内的任意地方开始 GC 都是安全的</strong>。注：这些执行到安全区域的线程也会标识自己进入了安全区域，此时 GC 就不用等着了，并且这些线程如果要出安全区域的时候也会查看此时是否在 GC ，如果在就阻塞等着，如果 GC 结束了那就继续执行。</p>
-<p>思考：为啥 counted 循环做很慢的操作，可能会卡顿？因为counted loop 不是安全区，无法触发GC，进而导致计算资源不释放内存不回收造成卡顿。注：counted 循环有：像for (int i…) 这种就是 counted 循环</p>
-<h3 id="2-标记阶段-并发执行（并发扫描-amp-标记辅助）"><a href="#2-标记阶段-并发执行（并发扫描-amp-标记辅助）" class="headerlink" title="2 标记阶段-并发执行（并发扫描&amp;标记辅助）"></a>2 标记阶段-并发执行（并发扫描&amp;标记辅助）</h3><p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b2e26ab7-7917-42a3-9363-355db753456e/Untitled.png" alt="Untitled"></p>
-<p>将状态切换至 _GCmark</p>
-<p>1.开启写屏障；2.选择不同的标记执行策略，扫描根对象并发标记内存中的对象；3.使用分布式的终止算法检查剩余的工作，发现标记阶段完成后进入标记终止阶段；</p>
-<ul>
-<li><strong>并发扫描</strong></li>
-</ul>
-<p>扫描栈上、全局变量等根对象并将它们加入队列，依次处理灰色队列中的对象，将对象标记成黑色并将它们指向的对象标记成灰色；注：扫描 Goroutine 栈期间会暂停当前处理器</p>
-<ul>
-<li><strong>标记进程资源分配：</strong></li>
-</ul>
-<p>一旦写屏障打开，垃圾收集器就开始标记阶段。首先是占用 25% CPU 计算资源，这意味着对于一个4线程的Go程序，一个P将专门用于垃圾收集工作。</p>
-<ul>
-<li><strong>Goroutine 的 3 种模式</strong></li>
-</ul>
-<p>用于并发扫描对象的工作协程 Goroutine 总共有三种不同的模式，分别是</p>
-<ul>
-<li>gcMarkWorkerDedicatedMode — 处理器专门负责标记对象，不会被调度器抢占；</li>
-<li>gcMarkWorkerFractionalMode — 当垃圾收集的后台 CPU 使用率达不到预期时（默认为 25%），启动该类型的工作协程帮助垃圾收集达到利用率的目标，因为它只占用同一个 CPU 的部分资源，所以可以被调度；</li>
-<li>gcMarkWorkerIdleMode — 当处理器没有可以执行的 Goroutine 时，它会运行垃圾收集的标记任务直到被抢占；不同模式 Goroutine 在标记对象时使用完全不同的策略：</li>
-<li><strong>工作池</strong></li>
-</ul>
-<p>属于一个生产者和消费者的模型。写屏障、根对象扫描和栈扫描都会向工作池中增加额外的灰色对象等待处理，而对象的扫描过程会将灰色对象标记成黑色，同时也可能发现新的灰色对象，，同时为了减少锁竞争，它具有属于 P 的本地任务列表和全局任务列表。</p>
-<ul>
-<li><strong>用户程序辅助标记（Mutator Mark Assists）</strong></li>
-</ul>
-<p>为了保证用户程序分配内存的速度不会超出后台任务的标记速度，避免用户程序分配内存影响垃圾收集器完成标记工作的期望时间，从而保证标记任务在到达期望堆大小时完成，运行时还引入了标记辅助技术。</p>
-<ul>
-<li><strong>实现</strong></li>
-</ul>
-<p>遵循<strong>分配多少内存就需要完成多少标记任务</strong>的原则。</p>
-<ul>
-<li>优化</li>
-</ul>
-<p>如果任何本次垃圾回收最终需要大量的 Mutator Mark Assists 才能完成工作，则垃圾收集器会提前开始下一个垃圾收集周期。这样做可以减少下一次垃圾收集所需的 Mutator Mark Assists。</p>
-<h3 id="标记终止阶段-STW"><a href="#标记终止阶段-STW" class="headerlink" title="标记终止阶段 -STW"></a>标记终止阶段 -STW</h3><p>暂停程序，将状态切换 _GCmarktermination</p>
-<p>1.关闭混合写屏障</p>
-<p>2.关闭所有协助垃圾收集的用户程序，恢复用户 Goroutine 的调度</p>
-<p>3.基于本轮 GC 数据统计,计算下一轮 GC 目标。</p>
-<h3 id="清理阶段-并发执行"><a href="#清理阶段-并发执行" class="headerlink" title="清理阶段- 并发执行"></a>清理阶段- 并发执行</h3><p>将状态切换至 _GCoff</p>
-<ul>
-<li>后台并发清理所有的内存管理单元，当用户程序在申请内存时才会惰性回收内存(将清理导致的延迟和吞吐量降低分散到每次内存分配中）；</li>
-<li><strong>回收器</strong></li>
-</ul>
-<p>清理中包含对象回收器和内存单元回收器，这两种回收器使用不同的算法清理堆内存：</p>
-<ul>
-<li>对象回收器在 mspan 中查找并释放未被标记的对象；</li>
-<li>内存单元回收器会在内存中查找所有对象都未被标记的 mspan；</li>
-</ul>
-<h2 id="演进过程"><a href="#演进过程" class="headerlink" title="演进过程"></a>演进过程</h2></div></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item">Posted&nbsp;<time dateTime="2022-10-13T04:05:28.764Z" title="2022/10/13 下午12:05:28">2022-10-13</time></span><span class="level-item">Updated&nbsp;<time dateTime="2022-10-13T02:34:02.118Z" title="2022/10/13 上午10:34:02">2022-10-13</time></span><span class="level-item">a minute read (About 123 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2022/10/13/hello-world/">Hello World</a></h1><div class="content"><p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<html lang="CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>WLQ</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="WLQ"><meta name="msapplication-TileImage" content="https://cdn.jsdelivr.net/gh/removeif/removeif-demo@latest/img/favicon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="WLQ"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta property="og:type" content="blog"><meta property="og:title" content="辣椒の酱"><meta property="og:url" content="https://removeif.github.io/"><meta property="og:site_name" content="辣椒の酱"><meta property="og:locale" content="CN"><meta property="og:image" content="https://cdn.jsdelivr.net/gh/removeif/removeif-demo@latest/img/avatar.png"><meta property="article:author" content="removeif"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://cdn.jsdelivr.net/gh/removeif/removeif-demo@latest/img/avatar.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com"},"headline":"WLQ","image":["http://example.com/img/og_image.png"],"author":{"@type":"Person","name":"WLQ"},"description":""}</script><link rel="icon" href="https://cdn.jsdelivr.net/gh/removeif/removeif-demo@latest/img/favicon.png"><meta name="referrer" content="no-referrer-when-downgrade"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/font-awesome/5.12.0/css/all.min.css"><link rel="stylesheet" href="https://fonts.loli.net/css?family=Ubuntu:400,600|Source+Code+Pro|Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Microsoft YaHei:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&amp;amp;subset=latin,latin-ext|Inconsolata|Itim|Lobster.css"><script src="https://cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script><script src="/js/globalUtils.js"></script><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" defer></script><!--!--><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/pace/1.0.2/pace.min.js"></script><link rel="stylesheet" href="/live2d/waifu.css"><script type="text/javascript" async src="/live2d/autoload.js"></script><meta name="generator" content="Hexo 5.0.2"></head><body class="is-3-column has-navbar-fixed-top"><nav class="navbar navbar-main is-fixed-top"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="https://cdn.jsdelivr.net/gh/removeif/removeif-demo@latest/img/logo.png" alt="WLQ" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item is-active" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a><a class="navbar-item" href="/album">Album</a><a class="navbar-item" href="/friend">Friend</a><a class="navbar-item" href="/message">Message</a><a class="navbar-item" href="/self-talking">Self-talking</a><a class="navbar-item" href="/music">Music</a><a class="navbar-item" href="/media">Media</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Join Gitter" href="https://gitter.im/hexo-theme-amazing/community"><i class="fab fa-gitter"></i></a><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/removeif/hexo-theme-amazing"><i class="fab fa-github"></i></a><a class="navbar-item search" title="Suche" href="javascript:;"><i class="fas fa-search"></i></a><a class="navbar-item" id="night-nav" title="Night Mode" href="javascript:;"><i class="fas fa-moon" id="night-icon"></i></a></div></div></div></nav><script type="text/javascript" src="/js/theme-setting.js"></script><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card widget">
+            <div class="card-content">
+                <h3 class="menu-label">Hot Recommend</h3><span id="index_hot_div">Loading...Wait a Minute!</span>
+            </div>
+        </div><!--!--><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2022-10-13  <a class="commentCountImg" href="/2022/10/13/hello-world/#comment-container"><span class="display-none-class">212d5e6f12a4c2d724f97255199c93a3</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="212d5e6f12a4c2d724f97255199c93a3">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>a minute  <i class="fas fa-pencil-alt"> </i>0.1 k</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2022/10/13/hello-world/">Hello World</a></h1><div class="content"><p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
 <h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
 
 <p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
@@ -334,39 +16,244 @@
 <h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 
 <p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-</div></article></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/img/avatar.png" alt="WLQ"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">WLQ</p><p class="is-size-6 is-block">记录、分享</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Your location</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">Posts</p><a href="/archives"><p class="title">2</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Categories</p><a href="/categories"><p class="title">0</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Tags</p><a href="/tags"><p class="title">0</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/ORVR-wlq" target="_blank" rel="noopener">Follow</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/ORVR-wlq"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Facebook" href="https://github.com/ORVR-wlq"><i class="fab fa-facebook"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Twitter" href="https://github.com/ORVR-wlq"><i class="fab fa-twitter"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Dribbble" href="https://github.com/ORVR-wlq"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/"><i class="fas fa-rss"></i></a></div></div></div><!--!--><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">Links</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://github.com/ORVR-wlq" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">github.com</span></span></a></li><li><a class="level is-mobile" href="https://github.com/ORVR-wlq" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">github.com</span></span></a></li></ul></div></div></div><!--!--><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">Recents</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-10-13T06:06:09.214Z">2022-10-13</time></p><p class="title"><a href="/2022/10/13/golang/go%20GC%E6%A8%A1%E5%9E%8B/">GC 模型</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-10-13T04:05:28.764Z">2022-10-13</time></p><p class="title"><a href="/2022/10/13/hello-world/">Hello World</a></p></div></article></div></div><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">Archives</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2022/10/"><span class="level-start"><span class="level-item">October 2022</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li></ul></div></div></div><!--!--><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">Subscribe for updates</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="Subscribe"></div></div></form></div></div></div><div class="card widget"><div class="card-content"><div class="notification is-danger">You need to set <code>client_id</code> and <code>slot_id</code> to show this AD unit. Please set it in <code>_config.yml</code>.</div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">follow.it</h3><form action="" method="post" target="_blank"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="Subscribe"></div></div></form></div></div></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><p class="is-size-7"><span>&copy; 2022 WLQ</span></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ORVR-wlq"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("CN");</script><script>var IcarusThemeSettings = {
+</div><div class="index-category-tag">  <hr></div></article></div><div class="card"><div class="card-image"><a class="image is-7by3" href="/2019/11/25/self-talking/index/"><img class="fill" src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030170800.png" alt="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030170800.png"></a></div><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2019-11-25  <a class="commentCountImg" href="/2019/11/25/self-talking/index/#comment-container"><span class="display-none-class">d41d8cd98f00b204e9800998ecf8427e</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="d41d8cd98f00b204e9800998ecf8427e">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>fast  <i class="fas fa-pencil-alt"> </i>0.1 k</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/11/25/self-talking/index/"> </a></h1><div class="content"><div class = "text-center"><h1>碎碎念</h1></div><div class = "text-tips">
+
+<p>tips：github登录后按时间正序查看、可点赞加❤️、本插件<a target="_blank" rel="noopener" href="https://github.com/removeif/gitalk">地址</a>..<span id="busuanzi_container_page_pv">「<span id="busuanzi_value_page_pv">+99</span>次查看」</span></div></p>
+<div id="comment-container1"><div class="text-tips">碎碎念加载中，请稍等...</div></div>
+<link rel="stylesheet" href="https://cdnjs.loli.net/ajax/libs/gitalk/1.6.0/gitalk.css"/>
+<script>
+    $.getScript("/js/gitalk_self.min.js", function () {
+        var gitalk = new Gitalk({
+            clientID: '46a9f3481b46ea0129d8',
+            clientSecret: '79c7c9cb847e141757d7864453bcbf89f0655b24',
+            id: '666666',
+            repo: 'issue_database',
+            owner: 'removeif',
+            admin: "removeif",
+            createIssueManually: true,
+            distractionFreeMode: false
+        });
+        gitalk.render('comment-container1');
+    });
+</script></div><div class="index-category-tag">  <hr></div></article></div><div class="card"><div class="card-image"><a class="image is-7by3" href="/2019/09/09/friend/index/"><img class="fill" src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030170457.png" alt="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030170457.png"></a></div><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2019-09-09  <a class="commentCountImg" href="/2019/09/09/friend/index/#comment-container"><span class="display-none-class">d41d8cd98f00b204e9800998ecf8427e</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="d41d8cd98f00b204e9800998ecf8427e">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>2 m  <i class="fas fa-pencil-alt"> </i>0.3 k</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/09/09/friend/index/"> </a></h1><div class="content"><div class="friend-title-item"><br>申请友链须知<br><br><hr></div>
+
+<ul>
+<li>原则上只和技术类博客交换，但不包括含有和色情、暴力、政治敏感的网站。</li>
+<li>不和剽窃、侵权、无诚信的网站交换，优先和具有原创作品的网站交换。</li>
+<li>申请请提供：站点名称、站点链接、站点描述、<strong>logo或头像</strong>（<code>不要设置防盗链</code>）。</li>
+<li>排名不分先后，刷新后重排，更新信息后请留言告知。</li>
+<li>会定期清理很久很久不更新的、不符合要求的友链，不再另行通知。</li>
+<li>本站不存储友链图片，如果友链图片换了无法更新。图片裂了的会替换成默认图，需要更换的请留言告知。</li>
+<li>本站友链信息如下，申请友链前请先添加本站信息：<br>  网站图标：<a target="_blank" rel="noopener" href="https://removeif.github.io/images/avatar.jpg">https://removeif.github.io/images/avatar.jpg</a><br>  网站名称：辣椒の酱<br>  网站地址：<a target="_blank" rel="noopener" href="https://removeif.github.io/">https://removeif.github.io</a><br>  网站简介：后端开发，技术分享</li>
+</ul>
+<script type="text/javascript" defer src="/js/friend.js"></script>
+<div class="links-content">加载中，稍等几秒...</div></div><div class="index-category-tag">  <hr></div></article></div><!--!--><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2019-07-30  <a class="commentCountImg" href="/2019/07/30/music/index/#comment-container"><span class="display-none-class">368c51800a2a992e71f4e2d99acd1321</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="368c51800a2a992e71f4e2d99acd1321">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>fast  <i class="fas fa-pencil-alt"> </i>0.1 k</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/07/30/music/index/">音乐歌单收藏</a></h1><div class="content"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+<script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+<!-- require MetingJS -->
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+<meting-js style="width: auto;height: 2000px;"
+    server="netease"
+    type="playlist"
+    id="2364053447"
+    theme="#2980b9"
+    loop="all"
+    autoplay="false"
+    order="list"
+    storageName="aplayer-setting"
+    lrctype= 0
+    list-max-height="800px"
+    >
+</meting-js>
+
+<p style="text-align:center;margin-top:30px"><span style="font-size:14px">温馨提示：选择喜欢的音乐双击播放，由于版权原因部分不能播放。如果喜欢歌单<a href="https://music.163.com/#/user/home?id=132033817" target="_blank" rel="noopener">收藏</a>一下，去网易云都能播放哟！<span></span></span></p></div><div class="index-category-tag">  <hr></div></article></div><div class="card"><div class="card-image"><a class="image is-7by3" href="/2019/07/30/media/index/"><img class="fill" src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030170254.png" alt="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030170254.png"></a></div><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2019-07-30  <a class="commentCountImg" href="/2019/07/30/media/index/#comment-container"><span class="display-none-class">d41d8cd98f00b204e9800998ecf8427e</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="d41d8cd98f00b204e9800998ecf8427e">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>fast  <i class="fas fa-pencil-alt"> </i>0.1 k</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/07/30/media/index/"> </a></h1><div class="content"><div class="music-container">
+    <div class="music-player">
+        <div class="d-title">
+                <i class="fa fa-music"></i>&nbsp;&nbsp;听听音乐
+        </div>
+        <br/>
+    </div>
+    <div id="musicarea">
+        <div class="music"></div>
+        <p id="p_message"><span id="music_story_message" class="span_animation"></span></p>
+        <br/>
+        <ul id="musiclist"></ul>
+        <br/>
+        <div id="desc"></div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="/css/meplayer.min.css"/>
+<script type="text/javascript" defer src="/js/meplayer.js"></script>
+<script type="text/javascript" defer src="/js/music.js"></script>
+
+<br/>
+<p style = "text-align:center"><span style="font-size:13px;">音乐播放器由<a href="https://github.com/newraina/mePlayer" target="_blank" rel="noopener">mePlayer</a>提供，布局参照<a href="https://dp2px.com/music/" target="_blank" rel="noopener">网友博客</a>所作，感谢作者的辛勤付出。更多音乐分享请查看<a target="_blank" rel="noopener" href="https://removeif.github.io/music/">歌单</a>。</span></p>
+<link rel="stylesheet" href="/css/DPlayer.min.css"/>
+<br/>
+<br/>
+<div class="video-player">
+    <div class="d-title">
+            <i class="fa fa-video-camera"></i>&nbsp;&nbsp;看看视频
+    </div>
+    <br/>
+    <p class="hits">->点击以下条目开始播放视频,向下滑动查看更多<-</p>
+    <div id="video-list"></div>
+    <br/>
+    <div id="dplayer"><br/></div>
+</div>
+<script src="/js/DPlayer.min.js"></script>
+</div><div class="index-category-tag">  <hr></div></article></div><div class="card"><div class="card-image"><a class="image is-7by3" href="/2019/07/29/album/index/"><img class="fill" src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030170940.png" alt="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030170940.png"></a></div><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2019-07-29  <a class="commentCountImg" href="/2019/07/29/album/index/#comment-container"><span class="display-none-class">d41d8cd98f00b204e9800998ecf8427e</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="d41d8cd98f00b204e9800998ecf8427e">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>a minute  <i class="fas fa-pencil-alt"> </i>0.1 k</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/07/29/album/index/"> </a></h1><div class="content"><h1 id="🎈🎈微笑墙🎈🎈"><a href="#🎈🎈微笑墙🎈🎈" class="headerlink" title="🎈🎈微笑墙🎈🎈"></a>🎈🎈微笑墙🎈🎈</h1><blockquote>
+<p><strong>彭小苒</strong></p>
+</blockquote>
+<div class="justified-gallery">
+
+<p><img src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030171213.png" alt="彭小苒"><br><img src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030171254.png" alt="彭小苒"><br><img src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030171333.png" alt="彭小苒"></p>
+</div>
+
+<br>
+
+<blockquote>
+<p><strong>唐艺昕</strong></p>
+</blockquote>
+<div class="justified-gallery">
+
+<p><img src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030171425.png" alt="唐艺昕"></p>
+</div>
+
+
+<br>
+
+<blockquote>
+<p><strong>李一桐</strong></p>
+</blockquote>
+<div class="justified-gallery">
+
+<p><img src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030171645.png" alt="李一桐"><br><img src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030171729.png" alt="李一桐"></p>
+</div>
+
+<br>
+
+<blockquote>
+<p><strong>gakki</strong></p>
+</blockquote>
+<div class="justified-gallery">
+
+<p><img src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030171851.png" alt="gakki"></p>
+</div>
+
+<br>
+
+<hr>
+<p>图片搜集于互联网，侵权请<a target="_blank" rel="noopener" href="https://removeif.github.io/message/">留言</a>，马上处理😊。</p>
+</div><div class="index-category-tag">  <hr></div></article></div><!--!--><div class="card"><div class="card-image"><a class="image is-7by3" href="/2018/11/11/about/index/"><img class="fill" src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030172650.png" alt="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030172650.png"></a></div><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2018-11-11  <a class="commentCountImg" href="/2018/11/11/about/index/#comment-container"><span class="display-none-class">d41d8cd98f00b204e9800998ecf8427e</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="d41d8cd98f00b204e9800998ecf8427e">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>8 m  <i class="fas fa-pencil-alt"> </i>1.3 k</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2018/11/11/about/index/"> </a></h1><div class="content"><h4 id="个人简介"><a href="#个人简介" class="headerlink" title="个人简介"></a>个人简介</h4><hr>
+<p>分享很喜欢的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%BD%97%E6%B0%B8%E6%B5%A9/26814?fr=aladdin">老罗</a>的一段话：</p>
+<blockquote>
+<p>“<em><strong>每一个生命来到世间都注定改变世界，别无选择。要么变得好一点，要么变得坏一点。你如果走进社会为了生存为了什么不要脸的理由，变成了一个恶心的成年人社会中的一员，那你就把这个世界变得恶心了一点点。如果你一生刚正不阿，如果你一生耿直，没有做任何恶心的事情，没做对别人有害的事情，一辈子拼了老命勉强把自己身边的几个人照顾好了，没有成名没有发财，没有成就伟大的事业，然后耿着脖子一生正直，到了七八十岁耿着脖子去世了。你这一生是不是没有改变世界？你还是改变世界了，你把这个世界变得美好了一点点。因为世界上又多了一个好人。</strong></em>“</p>
+</blockquote>
+<p>善恶终有报,天道好轮回。不信抬头看,苍天饶过谁。<br>无论何时何地，我们都要保持一颗积极乐观、善良感恩的心。<br>但行好事莫问前程，永远年轻，永远热内盈眶，永远保持<strong>正能量</strong>。<br>💪💪💪💪💪💪冲鸭！！！！</p>
+<p>-&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;<br>个人信息：<br>计算机科学与技术专业<br>从事JAVA后端开发<br>码畜一枚<br>坚信代码改变世界</p>
+<br>
+
+<h4 id="博客信息"><a href="#博客信息" class="headerlink" title="博客信息"></a>博客信息</h4><hr>
+<ul>
+<li>网站采用的<a target="_blank" rel="noopener" href="http://github.com/ppoffice/hexo-theme-icarus">Icarus主题</a> </li>
+<li>追求尽可能的简洁，清晰，易用。</li>
+<li>在Icarus主题之上进行了部分修改。</li>
+</ul>
+<p><em><strong>更新日志：</strong></em><br>–<em>2020.09.20：icarus4.0适配</em><br>–<em>2020.01.18：icarus3.0适配</em><br>–<em>2019.11.17：增加深色主题开关</em><br>–<em>2019.10.30：去图，精简卡片</em><br>–<em>2019.10.22：改版部分显示，优化速度</em><br>–<em>2019.10.16：文章列表加上评论数显示</em><br>–<em>2019.10.13：改版评论</em><br>–<em>2019.09.25：图片、资源接入CDN免费jsDelivr、文章加入置顶</em><br>–<em>2019.09.19：开源<a target="_blank" rel="noopener" href="https://github.com/removeif/hexo-theme-icarus-removeif">博客代码</a></em><br>–<em>2019.09.19：修改布局，拉伸布局，更宽的展示</em><br>–<em>2019.09.18：修改友链ui为一行三个，并适配移动端，暗黑模式文章增加评论链接，增加留言链接</em><br>–<em>2019.09.14：增加<a target="_blank" rel="noopener" href="https://removeif.github.io/remove.io/">精简next主题</a></em><br>–<em>2019.09.14：利用中秋节放假，重做了首页的热门推荐、加个widget最新评论框、归档页加入文章贡献概览面板</em></p>
+<br>
+
+<h4 id="本站推荐索引"><a href="#本站推荐索引" class="headerlink" title="本站推荐索引"></a>本站推荐索引</h4><hr>
+<p><strong>博客主题相关</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/theme/github-Issue-%E4%BD%9C%E4%B8%BA%E5%8D%9A%E5%AE%A2%E5%BE%AE%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%BA%94%E7%94%A8.html">github Issue 作为博客微型数据库的应用</a></li>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/theme/github-page%E7%BD%91%E7%AB%99cdn%E4%BC%98%E5%8C%96%E5%8A%A0%E9%80%9F.html">github page网站cdn优化加速</a></li>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/theme/%E5%8D%9A%E5%AE%A2%E6%BA%90%E7%A0%81%E5%88%86%E4%BA%AB.html">博客源码分享</a></li>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/theme/%E5%8D%9A%E5%AE%A2%E6%8D%A2%E8%82%A4%E7%9A%84%E4%B8%80%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F%E6%80%9D%E8%B7%AF.html">博客换肤的一种实现方式思路</a></li>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/theme/%E5%8D%9A%E5%AE%A2%E4%B8%ADgitalk%E6%9C%80%E6%96%B0%E8%AF%84%E8%AE%BA%E7%9A%84%E8%8E%B7%E5%8F%96.html">博客中gitalk最新评论的获取</a></li>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/theme/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E7%89%87%E4%B8%8A%E4%BC%A0picgo%E5%B7%A5%E5%85%B7github%E5%9B%BE%E4%BC%A0%E4%BD%BF%E7%94%A8.html">博客图片上传picgo工具github图传使用</a></li>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/theme/%E5%AE%89%E8%A3%85%E3%80%81%E9%83%A8%E5%88%86%E9%85%8D%E7%BD%AEicarus%E4%B8%BB%E9%A2%98%E4%B8%AD%E6%96%87%E7%89%88.html">安装、部分配置icarus主题中文版</a></li>
+</ul>
+<p><strong>技术知识点</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/java/basic/Java%E5%B9%B6%E5%8F%91%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86%E7%82%B9.html">Java并发知识点</a><br></li>
+</ul>
+<p><strong>法律法规</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://search.chinalaw.gov.cn/search2.html">法律法规数据库</a></li>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/law/%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD%E5%9B%BD%E6%97%97%E6%B3%95.html">中华人民共和国国旗法</a></li>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/law/%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD%E5%AE%AA%E6%B3%95.html">中华人民共和国宪法</a></li>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/law/%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD%E6%B6%88%E8%B4%B9%E8%80%85%E6%9D%83%E7%9B%8A%E4%BF%9D%E6%8A%A4%E6%B3%95.html">中华人民共和国消费者权益保护法</a></li>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/law/%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD%E5%88%91%E4%BA%8B%E8%AF%89%E8%AE%BC%E6%B3%95.html">中华人民共和国刑事诉讼法</a></li>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/law/%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD%E5%A9%9A%E5%A7%BB%E6%B3%95.html">中华人民共和国婚姻法</a></li>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/law/%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E6%B3%95.html">中华人名共和国网络安全法</a>  </li>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/law/%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD%E5%8A%B3%E5%8A%A8%E6%B3%95.html">中华人民共和国劳动法</a><br></li>
+</ul>
+<p><strong>其他</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://removeif.github.io/music1/">网易云音乐歌单分享</a></li>
+</ul>
+<br>
+
+<h4 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h4><p><strong>2020计划</strong></p>
+<hr>
+<p>2019.12.31</p>
+<blockquote>
+<p><strong>2020-GOALS</strong>              </p>
+<ul>
+<li><input disabled="" type="checkbox"> 跑两三场马拉松</li>
+</ul>
+</blockquote>
+<p><strong>2019计划</strong></p>
+<hr>
+<p>2018.12.31&#x2F;21:59:00-&gt;更新于2019.12.31</p>
+<blockquote>
+<p><strong>2019-GOALS</strong></p>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> 购买的专业书籍至少看完一遍（并发、重构、设计模式…）-&gt; 95%<br><strong>额外：</strong></li>
+<li><input checked="" disabled="" type="checkbox"> 追了很多剧<br><strong>总结：</strong></li>
+<li>有优点有缺点，没坚持下来的还是太多，追了太多剧。以后多学习，多思考！</li>
+</ul>
+</blockquote>
+<br>
+
+<h4 id="时间轴记录"><a href="#时间轴记录" class="headerlink" title="时间轴记录"></a>时间轴记录</h4><hr>
+<div class="time-axis-main">
+    <ul class="time-axis"></ul>
+</div>
+<script src="/js/about-me.js"></script>
+<br>
+<br></div><div class="index-category-tag">  <hr></div></article></div><div class="card"><div class="card-image"><a class="image is-7by3" href="/2018/11/11/message/index/"><img class="fill" src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030172738.png" alt="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030172738.png"></a></div><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><i class="far fa-calendar-plus"> </i>2018-11-11  <a class="commentCountImg" href="/2018/11/11/message/index/#comment-container"><span class="display-none-class">d41d8cd98f00b204e9800998ecf8427e</span><i class="far fa-comment-dots"></i> <span class="commentCount" id="d41d8cd98f00b204e9800998ecf8427e">99+</span>  </a><span class="level-item"><i class="far fa-clock"> </i>fast  <i class="fas fa-pencil-alt"> </i>0.0 k</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2018/11/11/message/index/"> </a></h1><div class="content"><p><strong>来而不往非礼也</strong><br><strong>畅所欲言，有留必应</strong></p>
+</div><div class="index-category-tag">  <hr></div></article></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><!--!--><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar is-rounded" src="https://cdn.jsdelivr.net/gh/removeif/removeif-demo@latest/img/avatar.png" alt="辣椒の酱"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">辣椒の酱</p><p class="is-size-6 is-block">尚未执佩剑，转眼即江湖</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>阿尔及利亚</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">Seiten</p><a href="/archives"><p class="title">8</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Kategorien</p><a href="/categories"><p class="title">0</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Tags</p><a href="/tags"><p class="title">0</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/ppoffice" target="_blank" rel="noopener">Folgen</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/removeif"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Weibo" href="https://weibo.com/removeif"><i class="fab fa-weibo"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Email" href="mailto:removeif@163.com"><i class="fa fa-envelope"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Next" href="https://removeif.github.io/remove.io"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/atom.xml"><i class="fas fa-rss"></i></a></div><div><hr><p id="hitokoto">:D 一言句子获取中...</p><script type="text/javascript" defer>function getYiyan(){
+                                $.getJSON("https://v1.hitokoto.cn/", function (data) {
+                                if(data){
+                                    $('#hitokoto').html("");
+                                    $('#hitokoto').append("<strong style='color: #3273dc;'>"+data.hitokoto+"</strong>"+
+                                    "<p>"+"From《"+data.from+"》</p><p>Provider-"+data.creator+"</p>");
+                                }});}
+                                $(function (){getYiyan();$('#hitokoto').click(function(){getYiyan();})});</script></div></div></div><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">Links</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><div class="column-right-shadow is-hidden-widescreen"></div></div><div class="column column-right is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only order-3"><div class="card widget"><div class="card-content"><h3 class="menu-label">Latest Comment</h3><span class="body_hot_comment">Loading...Wait a Minute!</span></div></div><div class="card widget"><div class="card-content"><h3 class="menu-label">Letzte Einträge</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2022-10-13T04:05:28.764Z">2022-10-13</time></p><p class="title"><a href="/2022/10/13/hello-world/">Hello World</a></p></div></article><article class="media"><figure class="media-left"><a class="image" href="/2019/11/25/self-talking/index/"><img src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030170800.png" alt=""></a></figure><div class="media-content"><p class="date"><time dateTime="2019-11-25T06:49:08.000Z">2019-11-25</time></p><p class="title"><a href="/2019/11/25/self-talking/index/"> </a></p></div></article><article class="media"><figure class="media-left"><a class="image" href="/2019/09/09/friend/index/"><img src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030170457.png" alt=""></a></figure><div class="media-content"><p class="date"><time dateTime="2019-09-09T10:52:09.000Z">2019-09-09</time></p><p class="title"><a href="/2019/09/09/friend/index/"> </a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2019-07-30T02:43:45.000Z">2019-07-30</time></p><p class="title"><a href="/2019/07/30/music/index/">音乐歌单收藏</a></p></div></article><article class="media"><figure class="media-left"><a class="image" href="/2019/07/30/media/index/"><img src="https://cdn.jsdelivr.net/gh/removeif/blog_image/img/2020/20201030170254.png" alt=""></a></figure><div class="media-content"><p class="date"><time dateTime="2019-07-30T01:33:48.000Z">2019-07-30</time></p><p class="title"><a href="/2019/07/30/media/index/"> </a></p></div></article></div></div><!--!--><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Archive</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2022/10/"><span class="level-start"><span class="level-item">October 2022</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/11/"><span class="level-start"><span class="level-item">November 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/09/"><span class="level-start"><span class="level-item">September 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/07/"><span class="level-start"><span class="level-item">July 2019</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/11/"><span class="level-start"><span class="level-item">November 2018</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><a class="level is-mobile is-marginless" href="/archives/"><span class="level-start"><span class="level-item">查看全部&gt;&gt;</span></span></a></ul></div></div></div><!--!--><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">Abonnieren Sie Updates</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="Abonnieren"></div></div></form></div></div></div><!--!--></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="https://cdn.jsdelivr.net/gh/removeif/removeif-demo@latest/img/logo.png" alt="WLQ" height="28"></a><p class="size-small"><span>&copy; 2022 WLQ</span>  Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank">Icarus</a> &amp; <a href="https://github.com/removeif/hexo-theme-amazing" target="_blank">Amazing</a> <br><span>© <a href="http://www.beian.miit.gov.cn/" target="_blank">川ICP备88888888号-8（测试）</a><br></span><span>© 版权说明：[本网站所有内容均收集于互联网或自己创作,<br />&nbsp;&nbsp;&nbsp;&nbsp;方便于网友与自己学习交流，如有侵权，请<a href="/message" target="_blank">留言</a>，立即处理]<br /></span><span><span id="statistic-times">loading...</span><script>function createTime(time) {
+            var n = new Date(time);
+            now.setTime(now.getTime() + 250),
+                days = (now - n) / 1e3 / 60 / 60 / 24,
+                dnum = Math.floor(days),
+                hours = (now - n) / 1e3 / 60 / 60 - 24 * dnum,
+                hnum = Math.floor(hours),
+            1 == String(hnum).length && (hnum = "0" + hnum),
+                minutes = (now - n) / 1e3 / 60 - 1440 * dnum - 60 * hnum,
+                mnum = Math.floor(minutes),
+            1 == String(mnum).length && (mnum = "0" + mnum),
+                seconds = (now - n) / 1e3 - 86400 * dnum - 3600 * hnum - 60 * mnum,
+                snum = Math.round(seconds),
+            1 == String(snum).length && (snum = "0" + snum),
+                document.getElementById("statistic-times").innerHTML = "❤️Site from <strong>"+time.split(" ")[0].replace(/\//g,".")+"</strong> has existed <strong>" + dnum + "</strong> d <strong>" + hnum + "</strong> h <strong>" + mnum + "</strong> m <strong>" + snum + "</strong> s！❤️";
+        }var now = new Date();setInterval("createTime('2018/11/11 00:00:00')", 250,"");</script><br></span><div class="size-small"><span>❤️Thx <strong><span id="busuanzi_value_site_uv">99+</span></strong> users <strong><span id="busuanzi_value_site_pv">99+</span></strong> visited！❤️</span></div></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/removeif/hexo-theme-amazing"><i class="fab fa-github"></i></a></p></div><div class="sideMusic"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="/js/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script><meting-js style="width: auto;height: 2000px;" server="netease" type="playlist" id="2364053447" theme="#2980b9" loop="all" autoplay="false" order="list" storageName="aplayer-setting" lrctype="0" list-max-height="400px" fixed="true"></meting-js></div></div></div></div></footer><script src="https://cdnjs.loli.net/ajax/libs/moment.js/2.22.2/moment-with-locales.min.js"></script><script src="https://cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" async></script><script>moment.locale("CN");</script><script>var IcarusThemeSettings = {
             article: {
                 highlight: {
                     clipboard: true,
                     fold: 'unfolded'
                 }
             }
-        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="Back to top" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
-      window.cookieconsent.initialise({
-        type: "info",
-        theme: "edgeless",
-        static: false,
-        position: "bottom-left",
-        content: {
-          message: "This website uses cookies to improve your experience.",
-          dismiss: "Got it!",
-          allow: "Allow cookies",
-          deny: "Decline",
-          link: "Learn more",
-          policy: "Cookie Policy",
-          href: "https://www.cookiesandyou.com/",
-        },
-        palette: {
-          popup: {
-            background: "#edeff5",
-            text: "#838391"
-          },
-          button: {
-            background: "#4b81e8"
-          },
-        },
-      });
-    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="Zurück nach oben" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdnjs.loli.net/ajax/libs/lightgallery/1.6.8/js/lightgallery.min.js" defer></script><script src="https://cdnjs.loli.net/ajax/libs/justifiedGallery/3.7.0/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
             if (typeof $.fn.lightGallery === 'function') {
                 $('.article').lightGallery({ selector: '.gallery-item' });
             }
@@ -376,6 +263,47 @@
                 }
                 $('.justified-gallery').justifiedGallery();
             }
-        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="Type something..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
-            loadInsight({"contentUrl":"/content.json"}, {"hint":"Type something...","untitled":"(Untitled)","posts":"Posts","pages":"Pages","categories":"Categories","tags":"Tags"});
+        });</script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><script>$.getScript('/js/comment-issue-data.js',function(){loadIssueData('46a9f3481b46ea0129d8','79c7c9cb847e141757d7864453bcbf89f0655b24','removeif','blog_comment',false);})</script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="Tippen Sie etwas..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"Tippen Sie etwas...","untitled":"(Ohne Titel)","posts":"Seiten","pages":"Pages","categories":"Kategorien","tags":"Tags"});
+        });</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.js"></script><script type="text/javascript">var pjax = new Pjax({
+            elements: "a",//代表点击链接就更新
+            selectors: [  //代表要更新的节点
+                ".section",
+                "title"
+            ],
+            cache: true,
+            cacheBust:false
+        })
+
+        function loadBusuanzi(){
+        $.getScript("//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js", function () {});
+        }
+
+        function loadMathJax() { //加载mathjax
+            $.getScript("//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML", function () {
+                MathJax.Hub.Config({ tex2jax: { inlineMath: [['$', '$'], ['\(', '\)']] } });
+                var math = document.getElementsByClassName("entry-content")[0];
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, math]);
+            });
+        };
+
+        // 开始 PJAX 执行的函数
+        document.addEventListener('pjax:send', function () {
+        });
+        
+        // PJAX 完成之后执行的函数，可以和上面的重载放在一起
+        document.addEventListener('pjax:complete', function () {
+            $(".section").css({opacity:1});
+            if(true){
+                $.getScript('/js/comment-issue-data.js',function(){loadIssueData('46a9f3481b46ea0129d8','79c7c9cb847e141757d7864453bcbf89f0655b24','removeif','blog_comment',false);});
+            }
+            if(false){
+                loadMathJax();
+            }
+            loadMainJs(jQuery, window.moment, window.ClipboardJS, window.IcarusThemeSettings);
+            loadBackTop();
+            loadBusuanzi();
+            if(typeof loadBanner == 'function'){
+                loadBanner();
+            }
         });</script></body></html>
